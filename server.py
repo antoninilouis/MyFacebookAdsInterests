@@ -5,12 +5,12 @@ from flask import render_template
 app = Flask(__name__)
 
 @app.route('/')
-def hello_world():
-    return 'Hello, World!'
+def main():
+    return render_template('main.html')
 
-@app.route('/login', methods=['GET'])
-def login():
-    error = None
-    # the code below is executed if the request method
-    # was GET or the credentials were invalid
-    return render_template('hello.html', error=error)
+@app.route('/seed_list', methods=['POST', 'GET'])
+def seed_list():
+    if request.method == 'POST':
+        request.form['interest-1']
+        return render_template('seed_list.html', interests=request.form.lists())
+    return render_template('seed_list.html')
