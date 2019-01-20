@@ -21,13 +21,24 @@ def main():
 
 @app.route('/seed_list', methods=['POST', 'GET'])
 def seed_list():
-    interest_list = [request.form['interest-1'], request.form['interest-2'], request.form['interest-3']]
+    form = request.form.copy()
+    seed = form.get('seed')
+    if seed != None:
+        del form['seed']
+        interest_list = list(map(lambda x: form.get(x), form))
 
-    results = TargetingSearch.search(params={
+    curated = form.get('curated')
+    if curated != None:
+        del form['curated']
+        interest_list = list(map(lambda x: form.get(x), form))
+
+    items = TargetingSearch.search(params={
         'interest_list': interest_list,
         'type': TargetingSearch.TargetingSearchTypes.interest_suggestion,
         'limit': 45,
     })
+
+    results = list(map(lambda x: x.get('name'), items))
 
     if request.method == 'POST':
         return render_template('seed_list.html', results=results)
