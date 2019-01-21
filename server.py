@@ -2,6 +2,7 @@ from flask import Flask
 from flask import request
 from flask import render_template
 from flask import json
+from flask import session
 
 from facebook_business.api import FacebookAdsApi
 from facebook_business.adobjects.targetingsearch import TargetingSearch
@@ -19,18 +20,26 @@ FacebookAdsApi.init(app_id, app_secret, access_token)
 def main():
     return render_template('main.html')
 
-@app.route('/seed_list', methods=['POST', 'GET'])
-def seed_list():
+@app.route('/result_list', methods=['POST', 'GET'])
+def result_list():
     form = request.form.copy()
+    app.logger.debug([item for sublist in form.listvalues() for item in sublist])
+
     seed = form.get('seed')
     if seed != None:
         del form['seed']
-        interest_list = list(map(lambda x: form.get(x), form))
+        interest_list = [item for sublist in form.listvalues() for item in sublist]
 
     curated = form.get('curated')
     if curated != None:
         del form['curated']
-        interest_list = list(map(lambda x: form.get(x), form))
+        interest_list = [item for sublist in form.listvalues() for item in sublist]
+
+        if session.get('interests') == None:
+            session['interests'] = []
+
+        # Store selected interests in session
+        session['interests'] += interest_list
 
     items = TargetingSearch.search(params={
         'interest_list': interest_list,
@@ -41,8 +50,8 @@ def seed_list():
     results = list(map(lambda x: x.get('name'), items))
 
     if request.method == 'POST':
-        return render_template('seed_list.html', results=results)
-    return render_template('seed_list.html')
+        return render_template('result_list.html', results=results)
+    return render_template('result_list.html')
 
 @app.route('/adinterest')
 def adinterest():

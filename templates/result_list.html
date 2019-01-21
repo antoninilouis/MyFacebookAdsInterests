@@ -1,7 +1,12 @@
 <!doctype html>
-<form action="/seed_list" method="POST">
+<form action="/result_list" method="POST">
   {% for interest in results %}
     <input type="checkbox" name="interest" value="{{ interest }}">{{ interest }}<br>
   {% endfor %}
   <input type="submit" name="curated" value="Submit">
 </form>
+<p>
+  {% for interest in session.interests %}
+    {{ interest }}
+  {% endfor %}
+</p>

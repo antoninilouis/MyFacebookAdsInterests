@@ -5,25 +5,18 @@
   <link rel="stylesheet" href="static/jquery-ui-1.12.1.custom/jquery-ui.min.css">
 </head>
 <body>
-  <form action="/seed_list" method="POST">
+  <form action="/result_list" method="POST" id="interest_form">
     Interest #1:<br>
-    <input type="text" name="interest-1" id="tags"><br>
+    <input type="text" name="interest-1"><br>
     Interest #2:<br>
-    <input type="text" name="interest-2" id="tags"><br>
+    <input type="text" name="interest-2"><br>
     Interest #3:<br>
-    <input type="text" name="interest-3" id="tags"><br>
+    <input type="text" name="interest-3"><br>
     <input type="submit" name="seed" value="Check">
   </form>
 </body>
 
 <script src="static/jquery-ui-1.12.1.custom/external/jquery/jquery.js"></script>
 <script src="static/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
-<script>
-  $( function() {
-    $("input").autocomplete({
-      source: "adinterest",
-      minLength: 3
-    });
-  } );
-</script>
+<script src="static/MyFacebookAdsInterests.js"></script>
 </html>
