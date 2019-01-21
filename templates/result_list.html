@@ -1,7 +1,7 @@
 <!doctype html>
 <form action="/result_list" method="POST">
-  {% for interest in results %}
-    <input type="checkbox" name="interest" value="{{ interest }}">{{ interest }}<br>
+  {% for result in results %}
+    <input type="checkbox" name="interest" value="{{ result.name }}">{{ result.name }} ({{ '{:,}'.format(result.audience_size).replace(',',' ') }})<br>
   {% endfor %}
   <input type="submit" name="curated" value="Submit">
 </form>

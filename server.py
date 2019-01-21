@@ -16,6 +16,9 @@ app_secret = app.config['APP_SECRET']
 access_token = app.config['ACCESS_TOKEN']
 FacebookAdsApi.init(app_id, app_secret, access_token)
 
+def targeting_search_audience_size(item):
+    return item['audience_size']
+
 @app.route('/')
 def main():
     return render_template('main.html')
@@ -23,7 +26,6 @@ def main():
 @app.route('/result_list', methods=['POST', 'GET'])
 def result_list():
     form = request.form.copy()
-    app.logger.debug([item for sublist in form.listvalues() for item in sublist])
 
     seed = form.get('seed')
     if seed != None:
@@ -41,13 +43,12 @@ def result_list():
         # Store selected interests in session
         session['interests'] += interest_list
 
-    items = TargetingSearch.search(params={
+    results = TargetingSearch.search(params={
         'interest_list': interest_list,
         'type': TargetingSearch.TargetingSearchTypes.interest_suggestion,
         'limit': 45,
     })
-
-    results = list(map(lambda x: x.get('name'), items))
+    results.sort(key=targeting_search_audience_size)
 
     if request.method == 'POST':
         return render_template('result_list.html', results=results)
