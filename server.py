@@ -27,6 +27,7 @@ def main():
 def result_list():
     form = request.form.copy()
 
+    # Get results from submitted form
     seed = form.get('seed')
     if seed != None:
         del form['seed']
@@ -43,11 +44,28 @@ def result_list():
         # Store selected interests in session
         session['interests'] = list(set(session['interests'] + interest_list))
 
-    results = TargetingSearch.search(params={
+    # Obtain a seed list of interests
+    initial_results = TargetingSearch.search(params={
         'interest_list': interest_list,
         'type': TargetingSearch.TargetingSearchTypes.interest_suggestion,
-        'limit': 45,
+        'limit': 10,
     })
+    interest_list = [interest['name'] for interest in initial_results]
+
+    # Obtain a large list of interests
+    step = 2
+    results = []
+    result_interests = []
+    for spl in range(0,10,step):
+        initial_results = TargetingSearch.search(params={
+            'interest_list': interest_list[spl:spl+step],
+            'type': TargetingSearch.TargetingSearchTypes.interest_suggestion,
+            'limit': 10,
+        })
+
+        # Filter doubles from initial_results
+        results += [interest for interest in initial_results if interest['name'] not in result_interests]
+        result_interests += [interest['name'] for interest in initial_results if interest['name'] not in result_interests]
     results.sort(key=targeting_search_audience_size)
 
     if request.method == 'POST':

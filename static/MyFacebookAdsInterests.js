@@ -1,5 +1,5 @@
 $( function() {
-    $("#interest_form").find("#interest_input").autocomplete({
+    $("input[id|='interest-input']").autocomplete({
       source: "adinterest",
       minLength: 3
     });
