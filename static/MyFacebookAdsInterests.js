@@ -14,12 +14,24 @@ var ResultList = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, (ResultList.__proto__ || Object.getPrototypeOf(ResultList)).call(this, props));
 
-    _this.state = { results: [] };
+    _this.state = {
+      inputValue: '',
+      results: []
+    };
+    _this.updateInputValue = _this.updateInputValue.bind(_this);
     _this.getResults = _this.getResults.bind(_this);
+    _this.aucomplete = React.createRef();
     return _this;
   }
 
   _createClass(ResultList, [{
+    key: "updateInputValue",
+    value: function updateInputValue(e) {
+      this.setState({
+        inputValue: e.target.value
+      });
+    }
+  }, {
     key: "getResults",
     value: function getResults() {
       var _this2 = this;
@@ -27,12 +39,32 @@ var ResultList = function (_React$Component) {
       var request = $.ajax({
         url: "/result_list",
         method: "POST",
-        data: { 'interest-1': 'Gold', 'seed': 'seed' }
+        data: { 'interest-1': this.state.inputValue, 'seed': 'seed' }
       });
 
       request.success(function (response) {
         _this2.setState({ results: response });
       });
+    }
+  }, {
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      var _this3 = this;
+
+      var node = this.aucomplete.current;
+      $(ReactDOM.findDOMNode(node)).autocomplete({
+        source: "adinterest",
+        minLength: 3,
+        select: function select(event, ui) {
+          _this3.setState({ inputValue: ui.item.value });
+        }
+      });
+    }
+  }, {
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      var node = this.autocomplete.current;
+      $(ReactDOM.findDOMNode(node)).autocomplete('destroy');
     }
   }, {
     key: "render",
@@ -41,30 +73,43 @@ var ResultList = function (_React$Component) {
 
       return React.createElement(
         "div",
-        { "class": "row" },
+        null,
         React.createElement(
           "div",
-          { "class": "col-6" },
+          { "class": "row" },
           React.createElement(
             "div",
-            { "class": "list-group" },
+            { "class": "col-6" },
             React.createElement(
-              "button",
-              { type: "button", "class": "btn btn-primary btn-sm", onClick: this.getResults },
-              "Search"
+              "form",
+              null,
+              React.createElement(
+                "div",
+                { "class": "form-group" },
+                React.createElement("input", { type: "text", "class": "form-control", value: this.state.inputValue, onChange: this.updateInputValue, ref: this.aucomplete, id: "interest-input" })
+              ),
+              React.createElement(
+                "button",
+                { type: "button", "class": "btn btn-primary btn-sm", onClick: this.getResults },
+                "Search"
+              )
+            )
+          ),
+          React.createElement(
+            "div",
+            { "class": "col-6" },
+            React.createElement(
+              "div",
+              { "class": "list-group" },
+              results.map(function (result) {
+                return React.createElement(
+                  "a",
+                  { href: "#", "class": "list-group-item list-group-item-action" },
+                  result
+                );
+              })
             )
           )
-        ),
-        React.createElement(
-          "div",
-          { "class": "col-6" },
-          results.map(function (result) {
-            return React.createElement(
-              "a",
-              { href: "#", "class": "list-group-item list-group-item-action" },
-              result
-            );
-          })
         )
       );
     }
@@ -74,11 +119,6 @@ var ResultList = function (_React$Component) {
 }(React.Component);
 
 $(function () {
-  $("input[id|='interest-input']").autocomplete({
-    source: "adinterest",
-    minLength: 3
-  });
-
   var domContainer = document.querySelector('#react-container');
   ReactDOM.render(React.createElement(ResultList), domContainer);
 });
