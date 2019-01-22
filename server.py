@@ -22,8 +22,8 @@ def targeting_search_audience_size(item):
     return item['audience_size']
 
 @app.route('/')
-def main():
-    return render_template('main.html')
+def start():
+    return render_template('start.html')
 
 @app.route('/result_list', methods=['POST', 'GET'])
 def result_list():
