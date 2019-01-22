@@ -41,7 +41,7 @@ def result_list():
             session['interests'] = []
 
         # Store selected interests in session
-        session['interests'] += interest_list
+        session['interests'] = list(set(session['interests'] + interest_list))
 
     results = TargetingSearch.search(params={
         'interest_list': interest_list,

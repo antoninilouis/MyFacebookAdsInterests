@@ -1,12 +1,49 @@
-<!doctype html>
-<form action="/result_list" method="POST">
-  {% for result in results %}
-    <input type="checkbox" name="interest" value="{{ result.name }}">{{ result.name }} ({{ '{:,}'.format(result.audience_size).replace(',',' ') }})<br>
-  {% endfor %}
-  <input type="submit" name="curated" value="Submit">
-</form>
-<p>
-  {% for interest in session.interests %}
-    {{ interest }}
-  {% endfor %}
-</p>
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+  <div class="col-sm-4">
+    <form action="/result_list" method="POST">
+      <div class="form-group">
+        <table class="table table-sm table-dark">
+          <thead>
+            <tr>
+              <th>Results</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for result in results %}
+            <tr>
+              <td>
+                <label class="form-check-label" for="{{ result.name }}">{{ result.name }} ({{ '{:,}'.format(result.audience_size).replace(',',' ') }})</label>
+              </td>
+              <td>
+                <input type="checkbox" class="form-check-input" name="interest" value="{{ result.name }}" id="{{ result.name }}">
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <button type="submit" class="btn btn-primary" name="curated">Submit</button>
+    </form>
+  </div>
+  <div class="col-sm">
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>Results ({{ session.interests | length }})</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for interest in session.interests %}
+        <tr>
+          <td>
+            {{ interest }}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

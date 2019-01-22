@@ -1,22 +1,22 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <link rel="stylesheet" href="static/jquery-ui-1.12.1.custom/jquery-ui.min.css">
-</head>
-<body>
-  <form action="/result_list" method="POST" id="interest_form">
-    Interest #1:<br>
-    <input type="text" name="interest-1"><br>
-    Interest #2:<br>
-    <input type="text" name="interest-2"><br>
-    Interest #3:<br>
-    <input type="text" name="interest-3"><br>
-    <input type="submit" name="seed" value="Check">
-  </form>
-</body>
-
-<script src="static/jquery-ui-1.12.1.custom/external/jquery/jquery.js"></script>
-<script src="static/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
-<script src="static/MyFacebookAdsInterests.js"></script>
-</html>
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+  <div class="col-sm-3">
+    <form action="/result_list" method="POST" id="interest_form">
+      <div class="form-group">
+        <label for="interest_input">Interest #1:</label>
+        <input type="text" class="form-control" name="interest-1" id="interest_input">
+      </div>
+      <div class="form-group">
+        <label for="interest_input">Interest #2:</label>
+        <input type="text" class="form-control" name="interest-2" id="interest_input">
+      </div>
+      <div class="form-group">
+        <label for="interest_input">Interest #3:</label>
+        <input type="text" class="form-control" name="interest-3" id="interest_input">
+      </div>
+      <button type="submit" class="btn btn-primary" name="seed">Submit</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
