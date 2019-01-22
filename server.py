@@ -22,8 +22,8 @@ def targeting_search_audience_size(item):
     return item['audience_size']
 
 @app.route('/')
-def start():
-    return render_template('start.html')
+def main():
+    return render_template('main.html')
 
 @app.route('/result_list', methods=['POST', 'GET'])
 def result_list():
@@ -49,7 +49,7 @@ def result_list():
     # Obtain a large list of interests
     results = []
     stored = []
-    for it in range(0,4):
+    for it in range(0,2):
         nb_keywords = 1
         new_interests = []
         for idx in range(0,len(interest_list),nb_keywords):
@@ -67,10 +67,14 @@ def result_list():
         interest_list = stored
 
     results.sort(key=targeting_search_audience_size)
+    results = list(map(lambda x: x.get('name'), results))
 
-    if request.method == 'POST':
-        return render_template('result_list.html', results=results)
-    return render_template('result_list.html')
+    response = app.response_class(
+        response = json.dumps(results),
+        status = 200,
+        mimetype = 'application/json'
+    )
+    return response
 
 @app.route('/adinterest')
 def adinterest():

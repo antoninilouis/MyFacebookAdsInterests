@@ -8,12 +8,22 @@
 </head>
 <body>
   <div class="container">
-      {% block content %}
-      {% endblock %}
+    {% block content %}
+    {% endblock %}
   </div>
+  <!-- React -->
+  <script src="https://unpkg.com/react@16/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+  <!-- Jquery -->
   <script src="static/jquery-ui-1.12.1.custom/external/jquery/jquery.js"></script>
   <script src="static/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+
+  <!-- Bootstrap -->
   <script src="static/bootstrap-4.2.1/dist/js/bootstrap.min.js"></script>
-  <script src="static/MyFacebookAdsInterests.js"></script>
+
+  <!-- Scripts -->
+  <script src="static/MyFacebookAdsInterests.js" type="text/babel"></script>
 </body>
 </html>
