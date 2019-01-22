@@ -1,3 +1,5 @@
+import random
+
 from flask import Flask
 from flask import request
 from flask import render_template
@@ -25,6 +27,9 @@ def main():
 
 @app.route('/result_list', methods=['POST', 'GET'])
 def result_list():
+    if session.get('interests') == None:
+        session['interests'] = []
+
     form = request.form.copy()
 
     # Get results from submitted form
@@ -38,34 +43,29 @@ def result_list():
         del form['curated']
         interest_list = [item for sublist in form.listvalues() for item in sublist]
 
-        if session.get('interests') == None:
-            session['interests'] = []
-
         # Store selected interests in session
         session['interests'] = list(set(session['interests'] + interest_list))
 
-    # Obtain a seed list of interests
-    initial_results = TargetingSearch.search(params={
-        'interest_list': interest_list,
-        'type': TargetingSearch.TargetingSearchTypes.interest_suggestion,
-        'limit': 10,
-    })
-    interest_list = [interest['name'] for interest in initial_results]
-
     # Obtain a large list of interests
-    step = 2
     results = []
-    result_interests = []
-    for spl in range(0,10,step):
-        initial_results = TargetingSearch.search(params={
-            'interest_list': interest_list[spl:spl+step],
-            'type': TargetingSearch.TargetingSearchTypes.interest_suggestion,
-            'limit': 10,
-        })
+    stored = []
+    for it in range(0,4):
+        nb_keywords = 1
+        new_interests = []
+        for idx in range(0,len(interest_list),nb_keywords):
+            items = TargetingSearch.search(params={
+                'interest_list': interest_list[idx:idx+nb_keywords],
+                'type': TargetingSearch.TargetingSearchTypes.interest_suggestion,
+                'limit': 8,
+            })
 
-        # Filter doubles from initial_results
-        results += [interest for interest in initial_results if interest['name'] not in result_interests]
-        result_interests += [interest['name'] for interest in initial_results if interest['name'] not in result_interests]
+            results += [interest for interest in items if interest['name'] not in stored and interest['name'] not in session['interests']]
+            # new_interests += [interest['name'] for interest in items if interest['name'] not in stored]
+            stored += [interest['name'] for interest in items if interest['name'] not in stored]
+
+        random.shuffle(stored)
+        interest_list = stored
+
     results.sort(key=targeting_search_audience_size)
 
     if request.method == 'POST':
