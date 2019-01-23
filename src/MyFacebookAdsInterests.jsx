@@ -29,6 +29,7 @@ class InterestForm extends React.Component {
     };
     this.updateInputValues = this.updateInputValues.bind(this);
     this.selectResult = this.selectResult.bind(this);
+    this.selectInterest = this.selectInterest.bind(this);
     this.getResults = this.getResults.bind(this);
     this.aucomplete = React.createRef();
   }
@@ -51,6 +52,15 @@ class InterestForm extends React.Component {
     } else {
       interests[selectedName] = results[e.target.id];
     }
+
+    this.setState({
+      interests: interests
+    });
+  }
+
+  selectInterest(e) {
+    let interests = this.state.interests;
+    delete interests[e.target.id];
 
     this.setState({
       interests: interests
@@ -116,7 +126,7 @@ class InterestForm extends React.Component {
               ({Object.keys(interests).length})
               {Object.keys(interests).map((key,index) => {
                 let interest = interests[key]
-                return <a href="#" class="list-group-item list-group-item-action" id={index}>{interest.name} ({interest.audience_size})</a>
+                return <a href="#" class="list-group-item list-group-item-action" onClick={this.selectInterest} id={interest.name}>{interest.name} ({interest.audience_size})</a>
               })}
             </div>
           </div>

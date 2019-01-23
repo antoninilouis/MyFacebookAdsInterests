@@ -48,6 +48,7 @@ var InterestForm = function (_React$Component) {
     };
     _this.updateInputValues = _this.updateInputValues.bind(_this);
     _this.selectResult = _this.selectResult.bind(_this);
+    _this.selectInterest = _this.selectInterest.bind(_this);
     _this.getResults = _this.getResults.bind(_this);
     _this.aucomplete = React.createRef();
     return _this;
@@ -74,6 +75,16 @@ var InterestForm = function (_React$Component) {
       } else {
         interests[selectedName] = results[e.target.id];
       }
+
+      this.setState({
+        interests: interests
+      });
+    }
+  }, {
+    key: "selectInterest",
+    value: function selectInterest(e) {
+      var interests = this.state.interests;
+      delete interests[e.target.id];
 
       this.setState({
         interests: interests
@@ -166,7 +177,7 @@ var InterestForm = function (_React$Component) {
                 var interest = interests[key];
                 return React.createElement(
                   "a",
-                  { href: "#", "class": "list-group-item list-group-item-action", id: index },
+                  { href: "#", "class": "list-group-item list-group-item-action", onClick: _this3.selectInterest, id: interest.name },
                   interest.name,
                   " (",
                   interest.audience_size,
