@@ -2,26 +2,29 @@ class ResultList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      inputValue: '',
+      inputValues: {
+        'seed': 'seed'
+      },
       results: []
     };
-    this.updateInputValue = this.updateInputValue.bind(this);
+    this.updateInputValues = this.updateInputValues.bind(this);
     this.getResults = this.getResults.bind(this);
     this.aucomplete = React.createRef();
   }
 
-  updateInputValue(e) {
+  updateInputValues(e) {
+    let inputValues = this.state.inputValues;
+    inputValues[e.target.id] = e.target.value;
     this.setState({
-      inputValue: e.target.value
+      inputValues: inputValues
     });
   }
 
   getResults() {
-
     var request = $.ajax({
       url: "/result_list",
       method: "POST",
-      data: { 'interest-1': this.state.inputValue, 'seed': 'seed' }
+      data: this.state.inputValues
     });
     
     request.success((response) => {
@@ -30,12 +33,17 @@ class ResultList extends React.Component {
   }
 
   componentDidMount() {
+    var thisRef = this;
     var node = this.aucomplete.current;
-    $(ReactDOM.findDOMNode(node)).autocomplete({
+    $(ReactDOM.findDOMNode(node)).children('input').autocomplete({
       source: "adinterest",
       minLength: 3,
-      select: (event, ui) => {
-        this.setState({inputValue: ui.item.value});
+      select: function(event, ui) {
+        let inputValues = thisRef.state.inputValues;
+        inputValues[this.id] = ui.item.value;
+        thisRef.setState({
+          inputValues: inputValues
+        });
       }
     });
   }
@@ -53,8 +61,10 @@ class ResultList extends React.Component {
         <div class="row">
           <div class="col-6">
             <form>
-              <div class="form-group">
-                <input type="text" class="form-control" value={this.state.inputValue} onChange={this.updateInputValue} ref={this.aucomplete} id="interest-input"></input>
+              <div class="form-group" ref={this.aucomplete}>
+                <input type="text" class="form-control" value={this.state.inputValues['interest-1']} onChange={this.updateInputValues} id="interest-1"></input>
+                <input type="text" class="form-control" value={this.state.inputValues['interest-2']} onChange={this.updateInputValues} id="interest-2"></input>
+                <input type="text" class="form-control" value={this.state.inputValues['interest-3']} onChange={this.updateInputValues} id="interest-3"></input>
               </div>
               <button type="button" class="btn btn-primary btn-sm" onClick={this.getResults}>Search</button>
             </form>

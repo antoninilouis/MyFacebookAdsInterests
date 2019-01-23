@@ -15,31 +15,35 @@ var ResultList = function (_React$Component) {
     var _this = _possibleConstructorReturn(this, (ResultList.__proto__ || Object.getPrototypeOf(ResultList)).call(this, props));
 
     _this.state = {
-      inputValue: '',
+      inputValues: {
+        'seed': 'seed'
+      },
       results: []
     };
-    _this.updateInputValue = _this.updateInputValue.bind(_this);
+    _this.updateInputValues = _this.updateInputValues.bind(_this);
     _this.getResults = _this.getResults.bind(_this);
     _this.aucomplete = React.createRef();
     return _this;
   }
 
   _createClass(ResultList, [{
-    key: "updateInputValue",
-    value: function updateInputValue(e) {
+    key: 'updateInputValues',
+    value: function updateInputValues(e) {
+      var inputValues = this.state.inputValues;
+      inputValues[e.target.id] = e.target.value;
       this.setState({
-        inputValue: e.target.value
+        inputValues: inputValues
       });
     }
   }, {
-    key: "getResults",
+    key: 'getResults',
     value: function getResults() {
       var _this2 = this;
 
       var request = $.ajax({
         url: "/result_list",
         method: "POST",
-        data: { 'interest-1': this.state.inputValue, 'seed': 'seed' }
+        data: this.state.inputValues
       });
 
       request.success(function (response) {
@@ -47,64 +51,69 @@ var ResultList = function (_React$Component) {
       });
     }
   }, {
-    key: "componentDidMount",
+    key: 'componentDidMount',
     value: function componentDidMount() {
-      var _this3 = this;
-
+      var thisRef = this;
       var node = this.aucomplete.current;
-      $(ReactDOM.findDOMNode(node)).autocomplete({
+      $(ReactDOM.findDOMNode(node)).children('input').autocomplete({
         source: "adinterest",
         minLength: 3,
         select: function select(event, ui) {
-          _this3.setState({ inputValue: ui.item.value });
+          var inputValues = thisRef.state.inputValues;
+          inputValues[this.id] = ui.item.value;
+          thisRef.setState({
+            inputValues: inputValues
+          });
         }
       });
     }
   }, {
-    key: "componentWillUnmount",
+    key: 'componentWillUnmount',
     value: function componentWillUnmount() {
       var node = this.autocomplete.current;
       $(ReactDOM.findDOMNode(node)).autocomplete('destroy');
     }
   }, {
-    key: "render",
+    key: 'render',
     value: function render() {
       var results = this.state.results;
 
       return React.createElement(
-        "div",
+        'div',
         null,
         React.createElement(
-          "div",
-          { "class": "row" },
+          'div',
+          { 'class': 'row' },
           React.createElement(
-            "div",
-            { "class": "col-6" },
+            'div',
+            { 'class': 'col-6' },
             React.createElement(
-              "form",
+              'form',
               null,
               React.createElement(
-                "div",
-                { "class": "form-group" },
-                React.createElement("input", { type: "text", "class": "form-control", value: this.state.inputValue, onChange: this.updateInputValue, ref: this.aucomplete, id: "interest-input" })
+                'div',
+                { 'class': 'form-group', ref: this.aucomplete },
+                React.createElement('input', { type: 'text', 'class': 'form-control', value: this.state.inputValues['interest-1'], onChange: this.updateInputValues, id: 'interest-1' }),
+                React.createElement('input', { type: 'text', 'class': 'form-control', value: this.state.inputValues['interest-2'], onChange: this.updateInputValues, id: 'interest-2' }),
+                React.createElement('input', { type: 'text', 'class': 'form-control', value: this.state.inputValues['interest-3'], onChange: this.updateInputValues, id: 'interest-3' })
               ),
               React.createElement(
-                "button",
-                { type: "button", "class": "btn btn-primary btn-sm", onClick: this.getResults },
-                "Search"
+                'button',
+                { type: 'button', 'class': 'btn btn-primary btn-sm', onClick: this.getResults },
+                'Search'
               )
             )
           ),
           React.createElement(
-            "div",
-            { "class": "col-6" },
+            'div',
+            { 'class': 'col-6' },
             React.createElement(
-              "div",
-              { "class": "list-group" },
+              'div',
+              { 'class': 'list-group' },
               results.map(function (result) {
                 return React.createElement(
-                  "a",
-                  { href: "#", "class": "list-group-item list-group-item-action" },
+                  'a',
+                  { href: '#', 'class': 'list-group-item list-group-item-action' },
                   result
                 );
               })
