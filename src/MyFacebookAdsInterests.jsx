@@ -18,6 +18,19 @@ const Loader = ({isLoading}) => {
   return null;
 }
 
+const InterestList = ({interests, selectInterest}) => {
+  // (Object.keys(interests).length)
+  return Object.keys(interests).map((key,index) => {
+    let interest = interests[key]
+    return (
+      <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" onClick={selectInterest} id={interest.name}>
+        {interest.name}
+        <span class="badge badge-primary badge-pill">{interest.audience_size.toLocaleString()}</span>
+      </a>
+    )
+  })
+}
+
 class InterestForm extends React.Component {
   constructor(props) {
     super(props);
@@ -123,16 +136,7 @@ class InterestForm extends React.Component {
               </div>
             </form>
             <div class="list-group">
-              ({Object.keys(interests).length})
-              {Object.keys(interests).map((key,index) => {
-                let interest = interests[key]
-                return (
-                  <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" onClick={this.selectInterest} id={interest.name}>
-                    {interest.name}
-                    <span class="badge badge-primary badge-pill">{interest.audience_size.toLocaleString()}</span>
-                  </a>
-                )
-              })}
+              <InterestList interests={interests} selectInterest={this.selectInterest} />
             </div>
           </div>
           <div class="col-6">

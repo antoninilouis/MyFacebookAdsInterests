@@ -32,6 +32,26 @@ var Loader = function Loader(_ref2) {
   return null;
 };
 
+var InterestList = function InterestList(_ref3) {
+  var interests = _ref3.interests,
+      selectInterest = _ref3.selectInterest;
+
+  // (Object.keys(interests).length)
+  return Object.keys(interests).map(function (key, index) {
+    var interest = interests[key];
+    return React.createElement(
+      "a",
+      { href: "#", "class": "list-group-item list-group-item-action d-flex justify-content-between align-items-center", onClick: selectInterest, id: interest.name },
+      interest.name,
+      React.createElement(
+        "span",
+        { "class": "badge badge-primary badge-pill" },
+        interest.audience_size.toLocaleString()
+      )
+    );
+  });
+};
+
 var InterestForm = function (_React$Component) {
   _inherits(InterestForm, _React$Component);
 
@@ -170,22 +190,7 @@ var InterestForm = function (_React$Component) {
             React.createElement(
               "div",
               { "class": "list-group" },
-              "(",
-              Object.keys(interests).length,
-              ")",
-              Object.keys(interests).map(function (key, index) {
-                var interest = interests[key];
-                return React.createElement(
-                  "a",
-                  { href: "#", "class": "list-group-item list-group-item-action d-flex justify-content-between align-items-center", onClick: _this3.selectInterest, id: interest.name },
-                  interest.name,
-                  React.createElement(
-                    "span",
-                    { "class": "badge badge-primary badge-pill" },
-                    interest.audience_size.toLocaleString()
-                  )
-                );
-              })
+              React.createElement(InterestList, { interests: interests, selectInterest: this.selectInterest })
             )
           ),
           React.createElement(
