@@ -6,10 +6,24 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var InterestInputList = function InterestInputList(_ref) {
-  var nbInput = _ref.nbInput,
-      inputValues = _ref.inputValues,
-      updateInputValues = _ref.updateInputValues;
+/**
+ * Shuffles array in place. ES6 version
+ * @param {Array} a items An array containing the items.
+ */
+function shuffle(a) {
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var _ref = [a[j], a[i]];
+    a[i] = _ref[0];
+    a[j] = _ref[1];
+  }
+  return a;
+}
+
+var InterestInputList = function InterestInputList(_ref2) {
+  var nbInput = _ref2.nbInput,
+      inputValues = _ref2.inputValues,
+      updateInputValues = _ref2.updateInputValues;
 
   var l = [];
   for (var index = 0; index < nbInput; index++) {
@@ -23,8 +37,8 @@ var InterestInputList = function InterestInputList(_ref) {
   return l;
 };
 
-var Loader = function Loader(_ref2) {
-  var isLoading = _ref2.isLoading;
+var Loader = function Loader(_ref3) {
+  var isLoading = _ref3.isLoading;
 
   if (isLoading) {
     return React.createElement("img", { src: "static/img/ajax-loader.gif", alt: "Loader" });
@@ -32,24 +46,41 @@ var Loader = function Loader(_ref2) {
   return null;
 };
 
-var InterestList = function InterestList(_ref3) {
-  var interests = _ref3.interests,
-      selectInterest = _ref3.selectInterest;
+var InterestList = function InterestList(_ref4) {
+  var nbList = _ref4.nbList,
+      interests = _ref4.interests,
+      selectInterest = _ref4.selectInterest;
 
-  // (Object.keys(interests).length)
-  return Object.keys(interests).map(function (key, index) {
-    var interest = interests[key];
-    return React.createElement(
-      "a",
-      { href: "#", "class": "list-group-item list-group-item-action d-flex justify-content-between align-items-center", onClick: selectInterest, id: interest.name },
-      interest.name,
-      React.createElement(
-        "span",
-        { "class": "badge badge-primary badge-pill" },
-        interest.audience_size.toLocaleString()
-      )
-    );
-  });
+  var l = [];
+  var len = Object.keys(interests).length;
+  var sliceLen = Math.ceil(len / nbList);
+  var beg = 0;
+  var end = sliceLen;
+  var keys = Object.keys(interests);
+
+  shuffle(keys);
+  while (beg < len) {
+    var slice = keys.slice(beg, end).map(function (key) {
+      var interest = interests[key];
+      return React.createElement(
+        "a",
+        { href: "#", "class": "list-group-item list-group-item-action d-flex justify-content-between align-items-center", onClick: selectInterest, id: interest.name },
+        interest.name,
+        React.createElement(
+          "span",
+          { "class": "badge badge-primary badge-pill" },
+          interest.audience_size.toLocaleString()
+        )
+      );
+    });
+    l = l.concat(slice);
+    l.push(React.createElement("br", null));
+
+    beg += sliceLen;
+    end += sliceLen;
+  }
+
+  return l;
 };
 
 var InterestForm = function (_React$Component) {
@@ -64,8 +95,12 @@ var InterestForm = function (_React$Component) {
       inputValues: {},
       isLoading: false,
       results: [],
-      interests: {}
+      interests: {},
+      nbInput: 3,
+      nbList: 1
     };
+    _this.addSplit = _this.addSplit.bind(_this);
+    _this.subSplit = _this.subSplit.bind(_this);
     _this.updateInputValues = _this.updateInputValues.bind(_this);
     _this.selectResult = _this.selectResult.bind(_this);
     _this.selectInterest = _this.selectInterest.bind(_this);
@@ -75,6 +110,24 @@ var InterestForm = function (_React$Component) {
   }
 
   _createClass(InterestForm, [{
+    key: "addSplit",
+    value: function addSplit(e) {
+      if (this.state.nbList < 10) {
+        this.setState({
+          nbList: this.state.nbList + 1
+        });
+      }
+    }
+  }, {
+    key: "subSplit",
+    value: function subSplit(e) {
+      if (this.state.nbList > 0) {
+        this.setState({
+          nbList: this.state.nbList - 1
+        });
+      }
+    }
+  }, {
     key: "updateInputValues",
     value: function updateInputValues(e) {
       var inputValues = this.state.inputValues;
@@ -178,11 +231,21 @@ var InterestForm = function (_React$Component) {
               React.createElement(
                 "div",
                 { ref: this.aucomplete },
-                React.createElement(InterestInputList, { nbInput: this.props.nbInput, inputValues: this.state.inputValues, updateInputValues: this.updateInputValues }),
+                React.createElement(InterestInputList, { nbInput: this.state.nbInput, inputValues: this.state.inputValues, updateInputValues: this.updateInputValues }),
                 React.createElement(
                   "button",
                   { type: "button", "class": "btn btn-primary btn-sm", onClick: this.getResults },
                   "Search"
+                ),
+                React.createElement(
+                  "button",
+                  { type: "button", "class": "btn btn-outline-primary btn-sm", onClick: this.addSplit },
+                  "+ split"
+                ),
+                React.createElement(
+                  "button",
+                  { type: "button", "class": "btn btn-outline-primary btn-sm", onClick: this.subSplit },
+                  "- split"
                 ),
                 React.createElement(Loader, { isLoading: this.state.isLoading })
               )
@@ -190,7 +253,10 @@ var InterestForm = function (_React$Component) {
             React.createElement(
               "div",
               { "class": "list-group" },
-              React.createElement(InterestList, { interests: interests, selectInterest: this.selectInterest })
+              "(",
+              Object.keys(interests).length,
+              ")",
+              React.createElement(InterestList, { nbList: this.state.nbList, interests: interests, selectInterest: this.selectInterest })
             )
           ),
           React.createElement(
@@ -239,5 +305,5 @@ var InterestForm = function (_React$Component) {
 
 $(function () {
   var domContainer = document.querySelector('#react-container');
-  ReactDOM.render(React.createElement(InterestForm, { nbInput: "3" }), domContainer);
+  ReactDOM.render(React.createElement(InterestForm, null), domContainer);
 });

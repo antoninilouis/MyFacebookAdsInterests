@@ -1,3 +1,15 @@
+/**
+ * Shuffles array in place. ES6 version
+ * @param {Array} a items An array containing the items.
+ */
+function shuffle(a) {
+  for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 const InterestInputList = ({nbInput, inputValues, updateInputValues}) => {
   let l = [];
   for (let index = 0; index < nbInput; index++) {
@@ -18,17 +30,33 @@ const Loader = ({isLoading}) => {
   return null;
 }
 
-const InterestList = ({interests, selectInterest}) => {
-  // (Object.keys(interests).length)
-  return Object.keys(interests).map((key,index) => {
-    let interest = interests[key]
-    return (
-      <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" onClick={selectInterest} id={interest.name}>
-        {interest.name}
-        <span class="badge badge-primary badge-pill">{interest.audience_size.toLocaleString()}</span>
-      </a>
-    )
-  })
+const InterestList = ({nbList, interests, selectInterest}) => {
+  let l = [];
+  let len = Object.keys(interests).length;
+  let sliceLen = Math.ceil(len / nbList);
+  let beg = 0;
+  let end = sliceLen;
+  let keys = Object.keys(interests);
+
+  shuffle(keys);
+  while (beg < len) {
+    const slice = keys.slice(beg, end).map((key) => {
+      let interest = interests[key]
+      return (
+        <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" onClick={selectInterest} id={interest.name}>
+          {interest.name}
+          <span class="badge badge-primary badge-pill">{interest.audience_size.toLocaleString()}</span>
+        </a>
+      )
+    });
+    l = l.concat(slice);
+    l.push(<br/>)
+
+    beg += sliceLen;
+    end += sliceLen;
+  }
+
+  return l;
 }
 
 class InterestForm extends React.Component {
@@ -38,13 +66,33 @@ class InterestForm extends React.Component {
       inputValues: {},
       isLoading: false,
       results: [],
-      interests: {}
+      interests: {},
+      nbInput: 3,
+      nbList: 1
     };
+    this.addSplit = this.addSplit.bind(this);
+    this.subSplit = this.subSplit.bind(this);
     this.updateInputValues = this.updateInputValues.bind(this);
     this.selectResult = this.selectResult.bind(this);
     this.selectInterest = this.selectInterest.bind(this);
     this.getResults = this.getResults.bind(this);
     this.aucomplete = React.createRef();
+  }
+
+  addSplit(e) {
+    if (this.state.nbList < 10) {
+      this.setState({
+        nbList: this.state.nbList + 1
+      })
+    }
+  }
+
+  subSplit(e) {
+    if (this.state.nbList > 0) {
+      this.setState({
+        nbList: this.state.nbList - 1
+      })
+    }
   }
 
   updateInputValues(e) {
@@ -130,13 +178,16 @@ class InterestForm extends React.Component {
           <div class="col-6">
             <form>
               <div ref={this.aucomplete}>
-                <InterestInputList nbInput={this.props.nbInput} inputValues={this.state.inputValues} updateInputValues={this.updateInputValues} />
+                <InterestInputList nbInput={this.state.nbInput} inputValues={this.state.inputValues} updateInputValues={this.updateInputValues} />
                 <button type="button" class="btn btn-primary btn-sm" onClick={this.getResults}>Search</button>
+                <button type="button" class="btn btn-outline-primary btn-sm" onClick={this.addSplit}>+ split</button>
+                <button type="button" class="btn btn-outline-primary btn-sm" onClick={this.subSplit}>- split</button>
                 <Loader isLoading={this.state.isLoading} />
               </div>
             </form>
             <div class="list-group">
-              <InterestList interests={interests} selectInterest={this.selectInterest} />
+              ({Object.keys(interests).length})
+              <InterestList nbList={this.state.nbList} interests={interests} selectInterest={this.selectInterest} />
             </div>
           </div>
           <div class="col-6">
@@ -169,5 +220,5 @@ class InterestForm extends React.Component {
 
 $( function() {
     const domContainer = document.querySelector('#react-container');
-    ReactDOM.render(<InterestForm nbInput="3" />, domContainer);
+    ReactDOM.render(<InterestForm />, domContainer);
 } );
