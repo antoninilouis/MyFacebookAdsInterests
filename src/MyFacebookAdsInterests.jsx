@@ -2,17 +2,12 @@ class InterestForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      inputValues: {
-        'seed': 'seed'
-      },
+      inputValues: {},
       results: [],
-      interests: [{
-        name: 'test',
-        audience_size: '1m'
-      }]
+      interests: {}
     };
     this.updateInputValues = this.updateInputValues.bind(this);
-    this.clickOnInterest = this.clickOnInterest.bind(this);
+    this.selectResult = this.selectResult.bind(this);
     this.getResults = this.getResults.bind(this);
     this.aucomplete = React.createRef();
   }
@@ -25,8 +20,20 @@ class InterestForm extends React.Component {
     });
   }
 
-  clickOnInterest(e) {
-    $(ReactDOM.findDOMNode(e.target)).toggleClass('active')
+  selectResult(e) {
+    let results = this.state.results;
+    let interests = this.state.interests;
+    const selectedName = results[e.target.id]['name'];
+
+    if (interests.hasOwnProperty(selectedName)) {
+      delete interests[selectedName];
+    } else {
+      interests[selectedName] = results[e.target.id];
+    }
+
+    this.setState({
+      interests: interests
+    });
   }
 
   getResults() {
@@ -80,16 +87,26 @@ class InterestForm extends React.Component {
             </form>
             <br/>
             <div class="list-group">
-              {interests.map((interest) =>
-                <a href="#" class="list-group-item list-group-item-action">{interest.name} ({interest.audience_size})</a>
-              )}
+              ({Object.keys(interests).length})
+              {Object.keys(interests).map((key,index) => {
+                let interest = interests[key]
+                return <a href="#" class="list-group-item list-group-item-action" id={index}>{interest.name} ({interest.audience_size})</a>
+              })}
+              {/* {interests.map((interest,index) =>
+                <a href="#" class="list-group-item list-group-item-action" id="{index}">{interest.name} ({interest.audience_size})</a>
+              )} */}
             </div>
           </div>
           <div class="col-6">
             <div class="list-group">
-              {results.map((result) =>
-                <a href="#" class="list-group-item list-group-item-action" onClick={this.clickOnInterest}>{result.name} ({result.audience_size})</a>
-              )}
+              ({results.length})
+              {results.map((result, index) => {
+                if (interests.hasOwnProperty(result.name)) {
+                  return <a href="#" class="list-group-item list-group-item-action active" onClick={this.selectResult} id={index}>{result.name} ({result.audience_size})</a>
+                } else {
+                  return <a href="#" class="list-group-item list-group-item-action" onClick={this.selectResult} id={index}>{result.name} ({result.audience_size})</a>
+                }
+              })}
             </div>
           </div>
         </div>

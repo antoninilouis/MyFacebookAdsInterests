@@ -15,24 +15,19 @@ var InterestForm = function (_React$Component) {
     var _this = _possibleConstructorReturn(this, (InterestForm.__proto__ || Object.getPrototypeOf(InterestForm)).call(this, props));
 
     _this.state = {
-      inputValues: {
-        'seed': 'seed'
-      },
+      inputValues: {},
       results: [],
-      interests: [{
-        name: 'test',
-        audience_size: '1m'
-      }]
+      interests: {}
     };
     _this.updateInputValues = _this.updateInputValues.bind(_this);
-    _this.clickOnInterest = _this.clickOnInterest.bind(_this);
+    _this.selectResult = _this.selectResult.bind(_this);
     _this.getResults = _this.getResults.bind(_this);
     _this.aucomplete = React.createRef();
     return _this;
   }
 
   _createClass(InterestForm, [{
-    key: 'updateInputValues',
+    key: "updateInputValues",
     value: function updateInputValues(e) {
       var inputValues = this.state.inputValues;
       inputValues[e.target.id] = e.target.value;
@@ -41,12 +36,24 @@ var InterestForm = function (_React$Component) {
       });
     }
   }, {
-    key: 'clickOnInterest',
-    value: function clickOnInterest(e) {
-      $(ReactDOM.findDOMNode(e.target)).toggleClass('active');
+    key: "selectResult",
+    value: function selectResult(e) {
+      var results = this.state.results;
+      var interests = this.state.interests;
+      var selectedName = results[e.target.id]['name'];
+
+      if (interests.hasOwnProperty(selectedName)) {
+        delete interests[selectedName];
+      } else {
+        interests[selectedName] = results[e.target.id];
+      }
+
+      this.setState({
+        interests: interests
+      });
     }
   }, {
-    key: 'getResults',
+    key: "getResults",
     value: function getResults() {
       var _this2 = this;
 
@@ -61,7 +68,7 @@ var InterestForm = function (_React$Component) {
       });
     }
   }, {
-    key: 'componentDidMount',
+    key: "componentDidMount",
     value: function componentDidMount() {
       var thisRef = this;
       var node = this.aucomplete.current;
@@ -78,13 +85,13 @@ var InterestForm = function (_React$Component) {
       });
     }
   }, {
-    key: 'componentWillUnmount',
+    key: "componentWillUnmount",
     value: function componentWillUnmount() {
       var node = this.autocomplete.current;
       $(ReactDOM.findDOMNode(node)).autocomplete('destroy');
     }
   }, {
-    key: 'render',
+    key: "render",
     value: function render() {
       var _this3 = this;
 
@@ -92,61 +99,79 @@ var InterestForm = function (_React$Component) {
       var interests = this.state.interests;
 
       return React.createElement(
-        'div',
+        "div",
         null,
         React.createElement(
-          'div',
-          { 'class': 'row' },
+          "div",
+          { "class": "row" },
           React.createElement(
-            'div',
-            { 'class': 'col-6' },
+            "div",
+            { "class": "col-6" },
             React.createElement(
-              'form',
+              "form",
               null,
               React.createElement(
-                'div',
-                { 'class': 'form-group', ref: this.aucomplete },
-                React.createElement('input', { type: 'text', 'class': 'form-control', value: this.state.inputValues['interest-1'], onChange: this.updateInputValues, id: 'interest-1' }),
-                React.createElement('input', { type: 'text', 'class': 'form-control', value: this.state.inputValues['interest-2'], onChange: this.updateInputValues, id: 'interest-2' }),
-                React.createElement('input', { type: 'text', 'class': 'form-control', value: this.state.inputValues['interest-3'], onChange: this.updateInputValues, id: 'interest-3' })
+                "div",
+                { "class": "form-group", ref: this.aucomplete },
+                React.createElement("input", { type: "text", "class": "form-control", value: this.state.inputValues['interest-1'], onChange: this.updateInputValues, id: "interest-1" }),
+                React.createElement("input", { type: "text", "class": "form-control", value: this.state.inputValues['interest-2'], onChange: this.updateInputValues, id: "interest-2" }),
+                React.createElement("input", { type: "text", "class": "form-control", value: this.state.inputValues['interest-3'], onChange: this.updateInputValues, id: "interest-3" })
               ),
               React.createElement(
-                'button',
-                { type: 'button', 'class': 'btn btn-primary btn-sm', onClick: this.getResults },
-                'Search'
+                "button",
+                { type: "button", "class": "btn btn-primary btn-sm", onClick: this.getResults },
+                "Search"
               )
             ),
-            React.createElement('br', null),
+            React.createElement("br", null),
             React.createElement(
-              'div',
-              { 'class': 'list-group' },
-              interests.map(function (interest) {
+              "div",
+              { "class": "list-group" },
+              "(",
+              Object.keys(interests).length,
+              ")",
+              Object.keys(interests).map(function (key, index) {
+                var interest = interests[key];
                 return React.createElement(
-                  'a',
-                  { href: '#', 'class': 'list-group-item list-group-item-action' },
+                  "a",
+                  { href: "#", "class": "list-group-item list-group-item-action", id: index },
                   interest.name,
-                  ' (',
+                  " (",
                   interest.audience_size,
-                  ')'
+                  ")"
                 );
               })
             )
           ),
           React.createElement(
-            'div',
-            { 'class': 'col-6' },
+            "div",
+            { "class": "col-6" },
             React.createElement(
-              'div',
-              { 'class': 'list-group' },
-              results.map(function (result) {
-                return React.createElement(
-                  'a',
-                  { href: '#', 'class': 'list-group-item list-group-item-action', onClick: _this3.clickOnInterest },
-                  result.name,
-                  ' (',
-                  result.audience_size,
-                  ')'
-                );
+              "div",
+              { "class": "list-group" },
+              "(",
+              results.length,
+              ")",
+              results.map(function (result, index) {
+                if (interests.hasOwnProperty(result.name)) {
+                  return React.createElement(
+                    "a",
+                    { href: "#", "class": "list-group-item list-group-item-action active", onClick: _this3.selectResult, id: index },
+                    result.name,
+                    " (",
+                    result.audience_size,
+                    ")"
+                  );
+                } else {
+                  return React.createElement(
+                    "a",
+                    { href: "#", "class": "list-group-item list-group-item-action", onClick: _this3.selectResult, id: index },
+                    result.name,
+                    " (",
+                    result.audience_size,
+                    ")"
+                  );
+                }
               })
             )
           )
