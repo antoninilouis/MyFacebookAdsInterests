@@ -1,8 +1,29 @@
+const InterestInputList = ({nbInput, inputValues, updateInputValues}) => {
+  let l = [];
+  for (let index = 0; index < nbInput; index++) {
+    let id = 'interest-' + index;
+    l.push(
+      <div class="form-group">
+        <input type="text" class="form-control form-control-sm" value={inputValues[id]} onChange={updateInputValues} id={id}></input>
+      </div>
+    )
+  }
+  return l;
+}
+
+const Loader = ({isLoading}) => {
+  if (isLoading) {
+    return <img src="static/img/ajax-loader.gif" alt="Loader"></img>;
+  }
+  return null;
+}
+
 class InterestForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       inputValues: {},
+      isLoading: false,
       results: [],
       interests: {}
     };
@@ -39,21 +60,26 @@ class InterestForm extends React.Component {
   getResults() {
     let inputValues = this.state.inputValues;
 
-    var request = $.ajax({
+    $.ajax({
       url: "/result_list",
       method: "POST",
-      data: inputValues
-    });
-    
-    request.success((response) => {
-      this.setState({results: response});
+      data: inputValues,
+      beforeSend: () => {
+        this.setState({isLoading: true});
+      },
+      complete: () => {
+        this.setState({isLoading: false});
+      },
+      success: (response) => {
+        this.setState({results: response});
+      }
     });
   }
 
   componentDidMount() {
     var thisRef = this;
     var node = this.aucomplete.current;
-    $(ReactDOM.findDOMNode(node)).children('input').autocomplete({
+    $(ReactDOM.findDOMNode(node)).find('input').autocomplete({
       source: "adinterest",
       minLength: 3,
       select: function(event, ui) {
@@ -80,14 +106,12 @@ class InterestForm extends React.Component {
         <div class="row">
           <div class="col-6">
             <form>
-              <div class="form-group" ref={this.aucomplete}>
-                <input type="text" class="form-control" value={this.state.inputValues['interest-1']} onChange={this.updateInputValues} id="interest-1"></input>
-                <input type="text" class="form-control" value={this.state.inputValues['interest-2']} onChange={this.updateInputValues} id="interest-2"></input>
-                <input type="text" class="form-control" value={this.state.inputValues['interest-3']} onChange={this.updateInputValues} id="interest-3"></input>
+              <div ref={this.aucomplete}>
+                <InterestInputList nbInput={this.props.nbInput} inputValues={this.state.inputValues} updateInputValues={this.updateInputValues} />
+                <button type="button" class="btn btn-primary btn-sm" onClick={this.getResults}>Search</button>
+                <Loader isLoading={this.state.isLoading} />
               </div>
-              <button type="button" class="btn btn-primary btn-sm" onClick={this.getResults}>Search</button>
             </form>
-            <br/>
             <div class="list-group">
               ({Object.keys(interests).length})
               {Object.keys(interests).map((key,index) => {
@@ -116,5 +140,5 @@ class InterestForm extends React.Component {
 
 $( function() {
     const domContainer = document.querySelector('#react-container');
-    ReactDOM.render(React.createElement(InterestForm), domContainer);
+    ReactDOM.render(<InterestForm nbInput="3" />, domContainer);
 } );

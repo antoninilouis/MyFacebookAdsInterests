@@ -27,11 +27,12 @@ def main():
 @app.route('/result_list', methods=['POST', 'GET'])
 def result_list():
     interest_list = [item for sublist in request.form.listvalues() for item in sublist]
+    app.logger.debug(interest_list)
 
     # Obtain a large list of interests
     results = []
     stored = []
-    for it in range(0,4):
+    for it in range(0,3):
         nb_keywords = 1
         for idx in range(0,len(interest_list),nb_keywords):
             items = TargetingSearch.search(params={

@@ -6,6 +6,32 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var InterestInputList = function InterestInputList(_ref) {
+  var nbInput = _ref.nbInput,
+      inputValues = _ref.inputValues,
+      updateInputValues = _ref.updateInputValues;
+
+  var l = [];
+  for (var index = 0; index < nbInput; index++) {
+    var id = 'interest-' + index;
+    l.push(React.createElement(
+      "div",
+      { "class": "form-group" },
+      React.createElement("input", { type: "text", "class": "form-control form-control-sm", value: inputValues[id], onChange: updateInputValues, id: id })
+    ));
+  }
+  return l;
+};
+
+var Loader = function Loader(_ref2) {
+  var isLoading = _ref2.isLoading;
+
+  if (isLoading) {
+    return React.createElement("img", { src: "static/img/ajax-loader.gif", alt: "Loader" });
+  }
+  return null;
+};
+
 var InterestForm = function (_React$Component) {
   _inherits(InterestForm, _React$Component);
 
@@ -16,6 +42,7 @@ var InterestForm = function (_React$Component) {
 
     _this.state = {
       inputValues: {},
+      isLoading: false,
       results: [],
       interests: {}
     };
@@ -59,14 +86,19 @@ var InterestForm = function (_React$Component) {
 
       var inputValues = this.state.inputValues;
 
-      var request = $.ajax({
+      $.ajax({
         url: "/result_list",
         method: "POST",
-        data: inputValues
-      });
-
-      request.success(function (response) {
-        _this2.setState({ results: response });
+        data: inputValues,
+        beforeSend: function beforeSend() {
+          _this2.setState({ isLoading: true });
+        },
+        complete: function complete() {
+          _this2.setState({ isLoading: false });
+        },
+        success: function success(response) {
+          _this2.setState({ results: response });
+        }
       });
     }
   }, {
@@ -74,7 +106,7 @@ var InterestForm = function (_React$Component) {
     value: function componentDidMount() {
       var thisRef = this;
       var node = this.aucomplete.current;
-      $(ReactDOM.findDOMNode(node)).children('input').autocomplete({
+      $(ReactDOM.findDOMNode(node)).find('input').autocomplete({
         source: "adinterest",
         minLength: 3,
         select: function select(event, ui) {
@@ -114,18 +146,16 @@ var InterestForm = function (_React$Component) {
               null,
               React.createElement(
                 "div",
-                { "class": "form-group", ref: this.aucomplete },
-                React.createElement("input", { type: "text", "class": "form-control", value: this.state.inputValues['interest-1'], onChange: this.updateInputValues, id: "interest-1" }),
-                React.createElement("input", { type: "text", "class": "form-control", value: this.state.inputValues['interest-2'], onChange: this.updateInputValues, id: "interest-2" }),
-                React.createElement("input", { type: "text", "class": "form-control", value: this.state.inputValues['interest-3'], onChange: this.updateInputValues, id: "interest-3" })
-              ),
-              React.createElement(
-                "button",
-                { type: "button", "class": "btn btn-primary btn-sm", onClick: this.getResults },
-                "Search"
+                { ref: this.aucomplete },
+                React.createElement(InterestInputList, { nbInput: this.props.nbInput, inputValues: this.state.inputValues, updateInputValues: this.updateInputValues }),
+                React.createElement(
+                  "button",
+                  { type: "button", "class": "btn btn-primary btn-sm", onClick: this.getResults },
+                  "Search"
+                ),
+                React.createElement(Loader, { isLoading: this.state.isLoading })
               )
             ),
-            React.createElement("br", null),
             React.createElement(
               "div",
               { "class": "list-group" },
@@ -187,5 +217,5 @@ var InterestForm = function (_React$Component) {
 
 $(function () {
   var domContainer = document.querySelector('#react-container');
-  ReactDOM.render(React.createElement(InterestForm), domContainer);
+  ReactDOM.render(React.createElement(InterestForm, { nbInput: "3" }), domContainer);
 });
