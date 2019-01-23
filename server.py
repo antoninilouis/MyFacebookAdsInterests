@@ -30,21 +30,9 @@ def result_list():
     if session.get('interests') == None:
         session['interests'] = []
 
-    form = request.form.copy()
-
-    # Get results from submitted form
-    seed = form.get('seed')
-    if seed != None:
-        del form['seed']
-        interest_list = [item for sublist in form.listvalues() for item in sublist]
-
-    curated = form.get('curated')
-    if curated != None:
-        del form['curated']
-        interest_list = [item for sublist in form.listvalues() for item in sublist]
-
-        # Store selected interests in session
-        session['interests'] = list(set(session['interests'] + interest_list))
+    # Store selected interests in session
+    interest_list = [item for sublist in request.form.listvalues() for item in sublist]
+    session['interests'] = list(set(session['interests'] + interest_list))
 
     # Obtain a large list of interests
     results = []
@@ -67,7 +55,11 @@ def result_list():
         interest_list = stored
 
     results.sort(key=targeting_search_audience_size)
-    results = list(map(lambda x: x.get('name'), results))
+    results = list(map(lambda x: {
+        'name': x.get('name'),
+        'audience_size': x.get('audience_size')
+    }, results))
+    app.logger.debug(results)
 
     response = app.response_class(
         response = json.dumps(results),

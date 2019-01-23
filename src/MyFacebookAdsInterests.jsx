@@ -72,7 +72,7 @@ class ResultList extends React.Component {
           <div class="col-6">
             <div class="list-group">
               {results.map((result) =>
-                <a href="#" class="list-group-item list-group-item-action">{result}</a>
+                <a href="#" class="list-group-item list-group-item-action">{result.name} ({result.audience_size})</a>
               )}
             </div>
           </div>

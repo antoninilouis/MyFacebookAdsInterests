@@ -114,7 +114,10 @@ var ResultList = function (_React$Component) {
                 return React.createElement(
                   'a',
                   { href: '#', 'class': 'list-group-item list-group-item-action' },
-                  result
+                  result.name,
+                  ' (',
+                  result.audience_size,
+                  ')'
                 );
               })
             )
