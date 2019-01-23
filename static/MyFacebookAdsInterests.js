@@ -57,10 +57,12 @@ var InterestForm = function (_React$Component) {
     value: function getResults() {
       var _this2 = this;
 
+      var inputValues = this.state.inputValues;
+
       var request = $.ajax({
         url: "/result_list",
         method: "POST",
-        data: this.state.inputValues
+        data: inputValues
       });
 
       request.success(function (response) {

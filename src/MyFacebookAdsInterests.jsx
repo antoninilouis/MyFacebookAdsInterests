@@ -37,10 +37,12 @@ class InterestForm extends React.Component {
   }
 
   getResults() {
+    let inputValues = this.state.inputValues;
+
     var request = $.ajax({
       url: "/result_list",
       method: "POST",
-      data: this.state.inputValues
+      data: inputValues
     });
     
     request.success((response) => {
@@ -92,9 +94,6 @@ class InterestForm extends React.Component {
                 let interest = interests[key]
                 return <a href="#" class="list-group-item list-group-item-action" id={index}>{interest.name} ({interest.audience_size})</a>
               })}
-              {/* {interests.map((interest,index) =>
-                <a href="#" class="list-group-item list-group-item-action" id="{index}">{interest.name} ({interest.audience_size})</a>
-              )} */}
             </div>
           </div>
           <div class="col-6">

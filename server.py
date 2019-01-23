@@ -4,7 +4,6 @@ from flask import Flask
 from flask import request
 from flask import render_template
 from flask import json
-from flask import session
 
 from facebook_business.api import FacebookAdsApi
 from facebook_business.adobjects.targetingsearch import TargetingSearch
@@ -27,19 +26,13 @@ def main():
 
 @app.route('/result_list', methods=['POST', 'GET'])
 def result_list():
-    if session.get('interests') == None:
-        session['interests'] = []
-
-    # Store selected interests in session
     interest_list = [item for sublist in request.form.listvalues() for item in sublist]
-    session['interests'] = list(set(session['interests'] + interest_list))
 
     # Obtain a large list of interests
     results = []
     stored = []
-    for it in range(0,2):
+    for it in range(0,4):
         nb_keywords = 1
-        # new_interests = []
         for idx in range(0,len(interest_list),nb_keywords):
             items = TargetingSearch.search(params={
                 'interest_list': interest_list[idx:idx+nb_keywords],
@@ -47,10 +40,8 @@ def result_list():
                 'limit': 8,
             })
 
-            results += [interest for interest in items if interest['name'] not in stored and interest['name'] not in session['interests']]
-            # new_interests += [interest['name'] for interest in items if interest['name'] not in stored]
+            results += [interest for interest in items if interest['name'] not in stored]
             stored += [interest['name'] for interest in items if interest['name'] not in stored]
-
         random.shuffle(stored)
         interest_list = stored
 
