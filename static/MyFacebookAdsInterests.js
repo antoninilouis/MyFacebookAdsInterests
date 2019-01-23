@@ -6,27 +6,32 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var ResultList = function (_React$Component) {
-  _inherits(ResultList, _React$Component);
+var InterestForm = function (_React$Component) {
+  _inherits(InterestForm, _React$Component);
 
-  function ResultList(props) {
-    _classCallCheck(this, ResultList);
+  function InterestForm(props) {
+    _classCallCheck(this, InterestForm);
 
-    var _this = _possibleConstructorReturn(this, (ResultList.__proto__ || Object.getPrototypeOf(ResultList)).call(this, props));
+    var _this = _possibleConstructorReturn(this, (InterestForm.__proto__ || Object.getPrototypeOf(InterestForm)).call(this, props));
 
     _this.state = {
       inputValues: {
         'seed': 'seed'
       },
-      results: []
+      results: [],
+      interests: [{
+        name: 'test',
+        audience_size: '1m'
+      }]
     };
     _this.updateInputValues = _this.updateInputValues.bind(_this);
+    _this.clickOnInterest = _this.clickOnInterest.bind(_this);
     _this.getResults = _this.getResults.bind(_this);
     _this.aucomplete = React.createRef();
     return _this;
   }
 
-  _createClass(ResultList, [{
+  _createClass(InterestForm, [{
     key: 'updateInputValues',
     value: function updateInputValues(e) {
       var inputValues = this.state.inputValues;
@@ -34,6 +39,11 @@ var ResultList = function (_React$Component) {
       this.setState({
         inputValues: inputValues
       });
+    }
+  }, {
+    key: 'clickOnInterest',
+    value: function clickOnInterest(e) {
+      $(ReactDOM.findDOMNode(e.target)).toggleClass('active');
     }
   }, {
     key: 'getResults',
@@ -76,7 +86,10 @@ var ResultList = function (_React$Component) {
   }, {
     key: 'render',
     value: function render() {
+      var _this3 = this;
+
       var results = this.state.results;
+      var interests = this.state.interests;
 
       return React.createElement(
         'div',
@@ -102,6 +115,21 @@ var ResultList = function (_React$Component) {
                 { type: 'button', 'class': 'btn btn-primary btn-sm', onClick: this.getResults },
                 'Search'
               )
+            ),
+            React.createElement('br', null),
+            React.createElement(
+              'div',
+              { 'class': 'list-group' },
+              interests.map(function (interest) {
+                return React.createElement(
+                  'a',
+                  { href: '#', 'class': 'list-group-item list-group-item-action' },
+                  interest.name,
+                  ' (',
+                  interest.audience_size,
+                  ')'
+                );
+              })
             )
           ),
           React.createElement(
@@ -113,7 +141,7 @@ var ResultList = function (_React$Component) {
               results.map(function (result) {
                 return React.createElement(
                   'a',
-                  { href: '#', 'class': 'list-group-item list-group-item-action' },
+                  { href: '#', 'class': 'list-group-item list-group-item-action', onClick: _this3.clickOnInterest },
                   result.name,
                   ' (',
                   result.audience_size,
@@ -127,10 +155,10 @@ var ResultList = function (_React$Component) {
     }
   }]);
 
-  return ResultList;
+  return InterestForm;
 }(React.Component);
 
 $(function () {
   var domContainer = document.querySelector('#react-container');
-  ReactDOM.render(React.createElement(ResultList), domContainer);
+  ReactDOM.render(React.createElement(InterestForm), domContainer);
 });

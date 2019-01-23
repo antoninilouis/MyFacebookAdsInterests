@@ -39,7 +39,7 @@ def result_list():
     stored = []
     for it in range(0,2):
         nb_keywords = 1
-        new_interests = []
+        # new_interests = []
         for idx in range(0,len(interest_list),nb_keywords):
             items = TargetingSearch.search(params={
                 'interest_list': interest_list[idx:idx+nb_keywords],
@@ -59,7 +59,6 @@ def result_list():
         'name': x.get('name'),
         'audience_size': x.get('audience_size')
     }, results))
-    app.logger.debug(results)
 
     response = app.response_class(
         response = json.dumps(results),
