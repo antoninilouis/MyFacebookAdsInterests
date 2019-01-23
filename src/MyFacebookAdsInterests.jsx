@@ -4,7 +4,7 @@ const InterestInputList = ({nbInput, inputValues, updateInputValues}) => {
     let id = 'interest-' + index;
     l.push(
       <div class="form-group">
-        <input type="text" class="form-control form-control-sm" value={inputValues[id]} onChange={updateInputValues} id={id}></input>
+        <input type="text" class="form-control form-control-sm" placeholder={id} value={inputValues[id]} onChange={updateInputValues} id={id}></input>
       </div>
     )
   }
@@ -126,7 +126,12 @@ class InterestForm extends React.Component {
               ({Object.keys(interests).length})
               {Object.keys(interests).map((key,index) => {
                 let interest = interests[key]
-                return <a href="#" class="list-group-item list-group-item-action" onClick={this.selectInterest} id={interest.name}>{interest.name} ({interest.audience_size})</a>
+                return (
+                  <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" onClick={this.selectInterest} id={interest.name}>
+                    {interest.name}
+                    <span class="badge badge-primary badge-pill">{interest.audience_size.toLocaleString()}</span>
+                  </a>
+                )
               })}
             </div>
           </div>
@@ -135,9 +140,19 @@ class InterestForm extends React.Component {
               ({results.length})
               {results.map((result, index) => {
                 if (interests.hasOwnProperty(result.name)) {
-                  return <a href="#" class="list-group-item list-group-item-action active" onClick={this.selectResult} id={index}>{result.name} ({result.audience_size})</a>
+                  return (
+                    <a href="#" class="list-group-item list-group-item-action active d-flex justify-content-between align-items-center" onClick={this.selectResult} id={index}>
+                      {result.name}
+                      <span class="badge badge-primary badge-pill">{result.audience_size.toLocaleString()}</span>
+                    </a>
+                  )
                 } else {
-                  return <a href="#" class="list-group-item list-group-item-action" onClick={this.selectResult} id={index}>{result.name} ({result.audience_size})</a>
+                  return (
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" onClick={this.selectResult} id={index}>
+                      {result.name}
+                      <span class="badge badge-primary badge-pill">{result.audience_size.toLocaleString()}</span>
+                    </a>
+                  )
                 }
               })}
             </div>

@@ -17,7 +17,7 @@ var InterestInputList = function InterestInputList(_ref) {
     l.push(React.createElement(
       "div",
       { "class": "form-group" },
-      React.createElement("input", { type: "text", "class": "form-control form-control-sm", value: inputValues[id], onChange: updateInputValues, id: id })
+      React.createElement("input", { type: "text", "class": "form-control form-control-sm", placeholder: id, value: inputValues[id], onChange: updateInputValues, id: id })
     ));
   }
   return l;
@@ -177,11 +177,13 @@ var InterestForm = function (_React$Component) {
                 var interest = interests[key];
                 return React.createElement(
                   "a",
-                  { href: "#", "class": "list-group-item list-group-item-action", onClick: _this3.selectInterest, id: interest.name },
+                  { href: "#", "class": "list-group-item list-group-item-action d-flex justify-content-between align-items-center", onClick: _this3.selectInterest, id: interest.name },
                   interest.name,
-                  " (",
-                  interest.audience_size,
-                  ")"
+                  React.createElement(
+                    "span",
+                    { "class": "badge badge-primary badge-pill" },
+                    interest.audience_size.toLocaleString()
+                  )
                 );
               })
             )
@@ -199,20 +201,24 @@ var InterestForm = function (_React$Component) {
                 if (interests.hasOwnProperty(result.name)) {
                   return React.createElement(
                     "a",
-                    { href: "#", "class": "list-group-item list-group-item-action active", onClick: _this3.selectResult, id: index },
+                    { href: "#", "class": "list-group-item list-group-item-action active d-flex justify-content-between align-items-center", onClick: _this3.selectResult, id: index },
                     result.name,
-                    " (",
-                    result.audience_size,
-                    ")"
+                    React.createElement(
+                      "span",
+                      { "class": "badge badge-primary badge-pill" },
+                      result.audience_size.toLocaleString()
+                    )
                   );
                 } else {
                   return React.createElement(
                     "a",
-                    { href: "#", "class": "list-group-item list-group-item-action", onClick: _this3.selectResult, id: index },
+                    { href: "#", "class": "list-group-item list-group-item-action d-flex justify-content-between align-items-center", onClick: _this3.selectResult, id: index },
                     result.name,
-                    " (",
-                    result.audience_size,
-                    ")"
+                    React.createElement(
+                      "span",
+                      { "class": "badge badge-primary badge-pill" },
+                      result.audience_size.toLocaleString()
+                    )
                   );
                 }
               })
