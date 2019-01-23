@@ -20,6 +20,15 @@ function shuffle(a) {
   return a;
 }
 
+var copyToClipboard = function copyToClipboard(strs) {
+  var el = document.createElement('textarea');
+  el.value = strs.join(', ');
+  document.body.appendChild(el);
+  el.select();
+  document.execCommand('copy');
+  document.body.removeChild(el);
+};
+
 var InterestInputList = function InterestInputList(_ref2) {
   var nbInput = _ref2.nbInput,
       inputValues = _ref2.inputValues,
@@ -29,9 +38,9 @@ var InterestInputList = function InterestInputList(_ref2) {
   for (var index = 0; index < nbInput; index++) {
     var id = 'interest-' + index;
     l.push(React.createElement(
-      "div",
-      { "class": "form-group" },
-      React.createElement("input", { type: "text", "class": "form-control form-control-sm", placeholder: id, value: inputValues[id], onChange: updateInputValues, id: id })
+      'div',
+      { 'class': 'form-group' },
+      React.createElement('input', { type: 'text', 'class': 'form-control form-control-sm', placeholder: id, value: inputValues[id], onChange: updateInputValues, id: id })
     ));
   }
   return l;
@@ -41,7 +50,7 @@ var Loader = function Loader(_ref3) {
   var isLoading = _ref3.isLoading;
 
   if (isLoading) {
-    return React.createElement("img", { src: "static/img/ajax-loader.gif", alt: "Loader" });
+    return React.createElement('img', { src: 'static/img/ajax-loader.gif', alt: 'Loader' });
   }
   return null;
 };
@@ -63,18 +72,27 @@ var InterestList = function InterestList(_ref4) {
     var slice = keys.slice(beg, end).map(function (key) {
       var interest = interests[key];
       return React.createElement(
-        "a",
-        { href: "#", "class": "list-group-item list-group-item-action d-flex justify-content-between align-items-center", onClick: selectInterest, id: interest.name },
+        'a',
+        { href: '#', 'class': 'list-group-item list-group-item-action d-flex justify-content-between align-items-center', onClick: selectInterest, id: interest.name },
         interest.name,
         React.createElement(
-          "span",
-          { "class": "badge badge-primary badge-pill" },
+          'span',
+          { 'class': 'badge badge-primary badge-pill' },
           interest.audience_size.toLocaleString()
         )
       );
     });
     l = l.concat(slice);
-    l.push(React.createElement("br", null));
+    l.push(React.createElement(
+      'div',
+      null,
+      React.createElement(
+        'a',
+        { href: '#', onClick: copyToClipboard.bind(null, keys.slice(beg, end)) },
+        'Copy'
+      ),
+      React.createElement('br', null)
+    ));
 
     beg += sliceLen;
     end += sliceLen;
@@ -110,7 +128,7 @@ var InterestForm = function (_React$Component) {
   }
 
   _createClass(InterestForm, [{
-    key: "addSplit",
+    key: 'addSplit',
     value: function addSplit(e) {
       if (this.state.nbList < 10) {
         this.setState({
@@ -119,7 +137,7 @@ var InterestForm = function (_React$Component) {
       }
     }
   }, {
-    key: "subSplit",
+    key: 'subSplit',
     value: function subSplit(e) {
       if (this.state.nbList > 0) {
         this.setState({
@@ -128,7 +146,7 @@ var InterestForm = function (_React$Component) {
       }
     }
   }, {
-    key: "updateInputValues",
+    key: 'updateInputValues',
     value: function updateInputValues(e) {
       var inputValues = this.state.inputValues;
       inputValues[e.target.id] = e.target.value;
@@ -137,7 +155,7 @@ var InterestForm = function (_React$Component) {
       });
     }
   }, {
-    key: "selectResult",
+    key: 'selectResult',
     value: function selectResult(e) {
       var results = this.state.results;
       var interests = this.state.interests;
@@ -154,7 +172,7 @@ var InterestForm = function (_React$Component) {
       });
     }
   }, {
-    key: "selectInterest",
+    key: 'selectInterest',
     value: function selectInterest(e) {
       var interests = this.state.interests;
       delete interests[e.target.id];
@@ -164,7 +182,7 @@ var InterestForm = function (_React$Component) {
       });
     }
   }, {
-    key: "getResults",
+    key: 'getResults',
     value: function getResults() {
       var _this2 = this;
 
@@ -186,7 +204,7 @@ var InterestForm = function (_React$Component) {
       });
     }
   }, {
-    key: "componentDidMount",
+    key: 'componentDidMount',
     value: function componentDidMount() {
       var thisRef = this;
       var node = this.aucomplete.current;
@@ -203,13 +221,13 @@ var InterestForm = function (_React$Component) {
       });
     }
   }, {
-    key: "componentWillUnmount",
+    key: 'componentWillUnmount',
     value: function componentWillUnmount() {
       var node = this.autocomplete.current;
       $(ReactDOM.findDOMNode(node)).autocomplete('destroy');
     }
   }, {
-    key: "render",
+    key: 'render',
     value: function render() {
       var _this3 = this;
 
@@ -217,77 +235,77 @@ var InterestForm = function (_React$Component) {
       var interests = this.state.interests;
 
       return React.createElement(
-        "div",
+        'div',
         null,
         React.createElement(
-          "div",
-          { "class": "row" },
+          'div',
+          { 'class': 'row' },
           React.createElement(
-            "div",
-            { "class": "col-6" },
+            'div',
+            { 'class': 'col-6' },
             React.createElement(
-              "form",
+              'form',
               null,
               React.createElement(
-                "div",
+                'div',
                 { ref: this.aucomplete },
                 React.createElement(InterestInputList, { nbInput: this.state.nbInput, inputValues: this.state.inputValues, updateInputValues: this.updateInputValues }),
                 React.createElement(
-                  "button",
-                  { type: "button", "class": "btn btn-primary btn-sm", onClick: this.getResults },
-                  "Search"
+                  'button',
+                  { type: 'button', 'class': 'btn btn-primary btn-sm', onClick: this.getResults },
+                  'Search'
                 ),
                 React.createElement(
-                  "button",
-                  { type: "button", "class": "btn btn-outline-primary btn-sm", onClick: this.addSplit },
-                  "+ split"
+                  'button',
+                  { type: 'button', 'class': 'btn btn-outline-primary btn-sm', onClick: this.addSplit },
+                  '+ split'
                 ),
                 React.createElement(
-                  "button",
-                  { type: "button", "class": "btn btn-outline-primary btn-sm", onClick: this.subSplit },
-                  "- split"
+                  'button',
+                  { type: 'button', 'class': 'btn btn-outline-primary btn-sm', onClick: this.subSplit },
+                  '- split'
                 ),
                 React.createElement(Loader, { isLoading: this.state.isLoading })
               )
             ),
             React.createElement(
-              "div",
-              { "class": "list-group" },
-              "(",
+              'div',
+              { 'class': 'list-group' },
+              '(',
               Object.keys(interests).length,
-              ")",
+              ')',
               React.createElement(InterestList, { nbList: this.state.nbList, interests: interests, selectInterest: this.selectInterest })
             )
           ),
           React.createElement(
-            "div",
-            { "class": "col-6" },
+            'div',
+            { 'class': 'col-6' },
             React.createElement(
-              "div",
-              { "class": "list-group" },
-              "(",
+              'div',
+              { 'class': 'list-group' },
+              '(',
               results.length,
-              ")",
+              ')',
               results.map(function (result, index) {
                 if (interests.hasOwnProperty(result.name)) {
                   return React.createElement(
-                    "a",
-                    { href: "#", "class": "list-group-item list-group-item-action active d-flex justify-content-between align-items-center", onClick: _this3.selectResult, id: index },
+                    'a',
+                    { href: '#', 'class': 'list-group-item list-group-item-action active d-flex justify-content-between align-items-center', onClick: _this3.selectResult, id: index },
                     result.name,
                     React.createElement(
-                      "span",
-                      { "class": "badge badge-primary badge-pill" },
+                      'span',
+                      { 'class': 'badge badge-primary badge-pill' },
                       result.audience_size.toLocaleString()
                     )
                   );
                 } else {
                   return React.createElement(
-                    "a",
-                    { href: "#", "class": "list-group-item list-group-item-action d-flex justify-content-between align-items-center", onClick: _this3.selectResult, id: index },
+                    'a',
+                    { href: '#', 'class': 'list-group-item list-group-item-action d-flex justify-content-between align-items-center', onClick: _this3.selectResult, id: index },
                     result.name,
                     React.createElement(
-                      "span",
-                      { "class": "badge badge-primary badge-pill" },
+                      'span',
+                      { 'class': 'badge badge-primary badge-pill' },
                       result.audience_size.toLocaleString()
                     )
                   );

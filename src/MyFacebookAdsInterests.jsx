@@ -10,6 +10,15 @@ function shuffle(a) {
   return a;
 }
 
+const copyToClipboard = (strs) => {
+  const el = document.createElement('textarea');
+  el.value = strs.join(', ');
+  document.body.appendChild(el);
+  el.select();
+  document.execCommand('copy');
+  document.body.removeChild(el);
+};
+
 const InterestInputList = ({nbInput, inputValues, updateInputValues}) => {
   let l = [];
   for (let index = 0; index < nbInput; index++) {
@@ -50,7 +59,12 @@ const InterestList = ({nbList, interests, selectInterest}) => {
       )
     });
     l = l.concat(slice);
-    l.push(<br/>)
+    l.push(
+      <div>
+        <a href="#" onClick={copyToClipboard.bind(null, keys.slice(beg, end))}>Copy</a>
+        <br/>
+      </div>
+    )
 
     beg += sliceLen;
     end += sliceLen;
